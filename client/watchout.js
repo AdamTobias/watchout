@@ -36,18 +36,12 @@ var initializeBoard = function(){
        .attr('cx', function(d){return d[0];})
        .attr('cy', function(d){return d[1];})
        .attr('r', radius)
+       .classed('enemy', true)
        .style('color', 'black');  
 
   setTimeout(moveEnemies, turnTime);
 
-  /*board.data().enter().append('circle')
-       .attr("class", "player")
-       .attr('cx', 390)
-       .attr('cy', 240)
-       .attr('r', radius)
-       .style('color', 'red');*/
-
-  board.selectAll('#player').data([[400, 250]]).enter().append('circle')
+  board.selectAll('#player').data([[width/2, height/2]]).enter().append('circle')
        .attr('cx', function(d){return d[0];})
        .attr('cy', function(d){return d[1];})
        .attr('r', radius)
@@ -61,12 +55,39 @@ var moveEnemies = function(){
   d3.select('svg').selectAll('circle').data(locations).transition().duration(turnTime)
     .attr('cx', function(d){return d[0];})
     .attr('cy', function(d){return d[1];})
-  
-  //setTimeout(moveEnemies, turnTime);
+    // setTimeout(moveEnemies, turnTime);
 }
 
 initializeBoard();
 
+var deathChecker = function(){
+  var xComps = [];
+  var yComps = [];
+  
+  var xPlayer = d3.select('#player').attr('cx').replace('px','');
+  var yPlayer = d3.select('#player').attr('cy').replace('px','');
+  
+  var enemies = d3.selectAll('.enemy');
+  enemies.each(function(){
+    xComps.push(d3.select(this).attr('cx'));
+    yComps.push(d3.select(this).attr('cy'));
+  });
+  /*console.log(xComps);
+  console.log(yComps);
+  console.log(xPlayer);
+  console.log(yPlayer);
+*/
+  for (var i=0; i<xComps.length; i++) {
+    if (Math.abs(xPlayer - xComps[i]) < (2*radius-4)) {
+      if(Math.abs(yPlayer - yComps[i]) < (2*radius-4)) {
+        console.log('COLLISION!!!');
+      }
+    }
+  }
+  setTimeout(deathChecker, 10);
+};
+
+deathChecker();
 
 
 
