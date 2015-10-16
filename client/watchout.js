@@ -5,6 +5,7 @@ var numEnemies = 10;
 var width = 800;
 var height = 500;
 var radius = 10;
+var turnTime = 1500;
 
 var randomizeLocations = function(){
   var location;
@@ -21,13 +22,25 @@ var initializeBoard = function(){
   
   randomizeLocations();
   
-  board.selectAll('circles').data(locations).enter().append('circle')
+  board.selectAll('circle').data(locations).enter().append('circle')
        .attr('cx', function(d){return d[0];})
        .attr('cy', function(d){return d[1];})
        .attr('r', radius)
        .style('color', 'black');  
+
+  setTimeout(moveEnemies, turnTime);
+}
+
+var moveEnemies = function(){
+  randomizeLocations();
+  d3.select('svg').selectAll('circle').data(locations).transition().duration(turnTime)
+    .attr('cx', function(d){return d[0];})
+    .attr('cy', function(d){return d[1];})
+  
+  setTimeout(moveEnemies, turnTime);
 }
 
 initializeBoard();
+
 
 
