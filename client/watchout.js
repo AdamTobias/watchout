@@ -119,6 +119,71 @@ var borderPatrol4 = function(){
 
 
 
+  window.addEventListener('keydown', function(e){
+     e.preventDefault();
+
+  var topOffset = d3.select('svg')[0][0].offsetTop + radius/2;
+  var leftOffset = d3.select('svg')[0][0].offsetLeft + radius/2;
+
+  var yPos = +d3.select("#player").attr("cx") - topOffset;
+  var xPos = +d3.select("#player").attr("cx") - leftOffset;
+  
+  
+ //  if(xPos < radius){
+ //    d3.selectAll('#player')
+ //       .attr('cx', +d3.select("#player").attr("cx") - 5);
+ //  }
+ // else if (xPos > width - radius){
+ //    xPos = width-radius;
+ //  }
+  
+ //  if(yPos < radius){
+ //    yPos = radius;
+ //  } else if (yPos > height - radius){
+ //    yPos = height - radius;
+ //  }
+
+  if (e.keyCode === 37) {
+    var xPos = +d3.select("#player").attr("cx");
+    if(xPos > radius+5){
+      d3.selectAll('#player').transition().duration(50)
+       .attr('cx', xPos-10);
+    }
+  }
+
+  if (e.keyCode === 38) {
+    var yPos = +d3.select("#player").attr("cy");
+    if(yPos > radius+6){
+      d3.selectAll('#player').transition().duration(50)
+       .attr('cy', yPos-10);
+    }
+  }
+
+  if (e.keyCode === 39) {
+    var xPos = +d3.select("#player").attr("cx");
+    if(xPos < width - radius - 5){
+      d3.selectAll('#player').transition().duration(50)
+       .attr('cx', xPos+10);
+    }
+  }
+
+  if (e.keyCode === 40) {
+    var yPos = +d3.select("#player").attr("cy");
+    if(yPos < height - radius - 5){
+      d3.selectAll('#player').transition().duration(50)
+       .attr('cy', yPos+10);
+    }
+  }
+})
+
+
+// window.addEventListener('keydown', function(e){
+//   if (e.keyCode === 38) {
+//       d3.selectAll('#player')
+//        .attr('cy', +d3.select("#player").attr("cy") - 5);
+//   }
+// })
+
 
 var moveEnemies = function(){
   randomizeLocations();
