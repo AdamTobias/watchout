@@ -1,7 +1,7 @@
 // start slingin' some d3 here.
 
 var locations = [];
-var numEnemies = 20;
+var numEnemies = 30;
 var width = 800;
 var height = 500;
 var radius = 10;
@@ -9,6 +9,7 @@ var turnTime = 1500;
 var highScore = 0;
 var currentScore = 0;
 var collisions = 0;
+var borderPatrolR = 10;
 
 var randomizeLocations = function(){
   var location;
@@ -42,6 +43,7 @@ var dragmove = function(d) {
       .attr("cx", xPos + "px");
 }
 
+
 var drag = d3.behavior.drag()
     .on("drag", dragmove);
 
@@ -68,7 +70,47 @@ var initializeBoard = function(){
        .attr('r', radius)
        .attr('id', 'player')
        .call(drag);
+
+  board.selectAll('#borderPatrol').data([[0+borderPatrolR,0+borderPatrolR]]).enter().append('circle')
+       .attr('cx', function(d){return d[0];})
+       .attr('cy', function(d){return d[1];})
+       .attr('r', borderPatrolR)
+       .attr('class', 'enemy')
+       .attr('id', 'borderPatrol');
+
 }
+
+
+var borderPatrol1 = function() {
+  d3.select('svg').selectAll('#borderPatrol').data([[width-borderPatrolR, 0+borderPatrolR]]).transition().duration(turnTime)
+    .attr('cx', function(d){return d[0];})
+    .attr('cy', function(d){return d[1];});
+  setTimeout(borderPatrol2, turnTime)
+}
+
+var borderPatrol2 = function(){
+    d3.select('svg').selectAll('#borderPatrol').data([[width-borderPatrolR, height-borderPatrolR]]).transition().duration(turnTime)
+      .attr('cx', function(d){return d[0];})
+      .attr('cy', function(d){return d[1];});
+    setTimeout(borderPatrol3, turnTime);
+}
+
+var borderPatrol3 = function(){
+    d3.select('svg').selectAll('#borderPatrol').data([[0+borderPatrolR, height-borderPatrolR]]).transition().duration(turnTime)
+      .attr('cx', function(d){return d[0];})
+      .attr('cy', function(d){return d[1];});
+    setTimeout(borderPatrol4, turnTime);
+}
+
+var borderPatrol4 = function(){
+    d3.select('svg').selectAll('#borderPatrol').data([[0+borderPatrolR, 0+borderPatrolR]]).transition().duration(turnTime)
+      .attr('cx', function(d){return d[0];})
+      .attr('cy', function(d){return d[1];});
+    setTimeout(borderPatrol1, turnTime);
+}
+
+
+
 
 
 var moveEnemies = function(){
@@ -87,6 +129,7 @@ var moveEnemies = function(){
 
 initializeBoard();
 
+
 var deathChecker = function(){
   var xComps = [];
   var yComps = [];
@@ -104,8 +147,10 @@ var deathChecker = function(){
       if(Math.abs(yPlayer - yComps[i]) < (2*radius-4)) {
         collisions++;
         d3.select(".collisions").select("span").text(collisions);
+        d3.select(".gameBoard").style("background-color", "red");
         setTimeout(deathChecker, 500);
         currentScore = 0;
+        setTimeout(function(){d3.select(".gameBoard").style("background-color", "white")},20);
         d3.select(".current").select("span").text(currentScore);
         return;
       }
@@ -113,8 +158,9 @@ var deathChecker = function(){
   }
   setTimeout(deathChecker, 10);
 };
-
+borderPatrol4();
 deathChecker();
+
 
 
 
