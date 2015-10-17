@@ -161,6 +161,8 @@ var deathChecker = function(){
         currentScore = 0;
         setTimeout(function(){d3.select(".gameBoard").style("background-color", "white")},20);
         d3.select(".current").select("span").text(currentScore);
+        var audio = new Audio(url('http://www.4uall.net/free-sound-effects/People-free-sound-effects/GRUNT_3.WAV'));
+        audio.play();
         return;
       }
     }
