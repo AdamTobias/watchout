@@ -5,7 +5,7 @@ Feel free to use it if you like. */
 
 
 .gameBoard {
-  border: 5px solid black;
+  border: 1px solid black;
 }
 
 #player{

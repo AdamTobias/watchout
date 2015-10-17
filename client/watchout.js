@@ -1,11 +1,14 @@
 // start slingin' some d3 here.
 
 var locations = [];
-var numEnemies = 10;
+var numEnemies = 20;
 var width = 800;
 var height = 500;
 var radius = 10;
 var turnTime = 1500;
+var highScore = 0;
+var currentScore = 0;
+var collisions = 0;
 
 var randomizeLocations = function(){
   var location;
@@ -16,9 +19,27 @@ var randomizeLocations = function(){
 }
 
 var dragmove = function(d) {
+    var topOffset = d3.select('svg')[0][0].offsetTop + radius/2;
+    var leftOffset = d3.select('svg')[0][0].offsetLeft + radius/2;
+
+    var yPos = ((d3.event.sourceEvent.pageY) - topOffset);
+    var xPos = ((d3.event.sourceEvent.pageX) - leftOffset);
+
+    if(xPos < radius){
+      xPos = radius;
+    } else if (xPos > width - radius){
+      xPos = width-radius;
+    }
+    if(yPos < radius){
+      yPos = radius;
+    } else if (yPos > height - radius){
+      yPos = height - radius;
+    }
+
+
     d3.select(this)
-      .attr("cy", ((d3.event.sourceEvent.pageY) - d3.select('svg')[0][0].offsetTop - radius/2 + "px"))
-      .attr("cx", ((d3.event.sourceEvent.pageX) - d3.select('svg')[0][0].offsetLeft - radius/2 + "px"));
+      .attr("cy", yPos + "px")
+      .attr("cx", xPos + "px");
 }
 
 var drag = d3.behavior.drag()
@@ -54,8 +75,14 @@ var moveEnemies = function(){
   randomizeLocations();
   d3.select('svg').selectAll('circle').data(locations).transition().duration(turnTime)
     .attr('cx', function(d){return d[0];})
-    .attr('cy', function(d){return d[1];})
-    // setTimeout(moveEnemies, turnTime);
+    .attr('cy', function(d){return d[1];});
+  currentScore += 100;
+  d3.select(".current").select("span").text(currentScore);
+  if(currentScore > highScore){
+    highScore = currentScore;
+    d3.select(".highscore").select("span").text(highScore);
+  }
+  setTimeout(moveEnemies, turnTime);
 }
 
 initializeBoard();
@@ -72,15 +99,15 @@ var deathChecker = function(){
     xComps.push(d3.select(this).attr('cx'));
     yComps.push(d3.select(this).attr('cy'));
   });
-  /*console.log(xComps);
-  console.log(yComps);
-  console.log(xPlayer);
-  console.log(yPlayer);
-*/
   for (var i=0; i<xComps.length; i++) {
     if (Math.abs(xPlayer - xComps[i]) < (2*radius-4)) {
       if(Math.abs(yPlayer - yComps[i]) < (2*radius-4)) {
-        console.log('COLLISION!!!');
+        collisions++;
+        d3.select(".collisions").select("span").text(collisions);
+        setTimeout(deathChecker, 500);
+        currentScore = 0;
+        d3.select(".current").select("span").text(currentScore);
+        return;
       }
     }
   }
