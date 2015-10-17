@@ -71,41 +71,48 @@ var initializeBoard = function(){
        .attr('id', 'player')
        .call(drag);
 
-  board.selectAll('#borderPatrol').data([[0+borderPatrolR,0+borderPatrolR]]).enter().append('circle')
-       .attr('cx', function(d){return d[0];})
-       .attr('cy', function(d){return d[1];})
+  board.selectAll('#borderPatrol').data([[0+borderPatrolR,0+borderPatrolR]]).enter().append('path')
+       .attr('x', function(d){return d[0];})
+       .attr('y', function(d){return d[1];})
        .attr('r', borderPatrolR)
        .attr('class', 'enemy')
-       .attr('id', 'borderPatrol');
+       .attr('id', 'borderPatrol')
+       //.attr("d", "m9.74101,0.23739l-2.2662,7.05768l-6.47481,2.91349l6.79856,1.94233l2.20144,5.89228l1.94232,-5.69805l7.05768,-2.84861l-6.92791,-2.46056l-2.33108,-6.79856l0,0z");
+       .attr("d", "m10,0 -2.2662,7.05768l-6.47481,2.91349l6.79856,1.94233l2.20144,5.89228l1.94232,-5.69805l7.05768,-2.84861l-6.92791,-2.46056l-2.33108,-6.79856l0,0z");
 
 }
 
 
 var borderPatrol1 = function() {
   d3.select('svg').selectAll('#borderPatrol').data([[width-borderPatrolR, 0+borderPatrolR]]).transition().duration(turnTime)
-    .attr('cx', function(d){return d[0];})
-    .attr('cy', function(d){return d[1];});
+    .attr('x', function(d){return d[0]})
+    .attr('y', function(d){return d[1]})
+    .attr('d', function(d){return 'm' + d[0] + ',' + (d[1] - radius) + '-2.2662,7.05768l-6.47481,2.91349l6.79856,1.94233l2.20144,5.89228l1.94232,-5.69805l7.05768,-2.84861l-6.92791,-2.46056l-2.33108,-6.79856l0,0z';})
+    
   setTimeout(borderPatrol2, turnTime)
 }
 
 var borderPatrol2 = function(){
     d3.select('svg').selectAll('#borderPatrol').data([[width-borderPatrolR, height-borderPatrolR]]).transition().duration(turnTime)
-      .attr('cx', function(d){return d[0];})
-      .attr('cy', function(d){return d[1];});
+    .attr('x', function(d){return d[0]})
+    .attr('y', function(d){return d[1]})      
+    .attr('d', function(d){return 'm' + d[0] + ',' + (d[1] - radius) + '-2.2662,7.05768l-6.47481,2.91349l6.79856,1.94233l2.20144,5.89228l1.94232,-5.69805l7.05768,-2.84861l-6.92791,-2.46056l-2.33108,-6.79856l0,0z';});
     setTimeout(borderPatrol3, turnTime);
 }
 
 var borderPatrol3 = function(){
     d3.select('svg').selectAll('#borderPatrol').data([[0+borderPatrolR, height-borderPatrolR]]).transition().duration(turnTime)
-      .attr('cx', function(d){return d[0];})
-      .attr('cy', function(d){return d[1];});
+     .attr('x', function(d){return d[0]})
+    .attr('y', function(d){return d[1]})     
+      .attr('d', function(d){return 'm' + d[0] + ',' + (d[1] - radius) + '-2.2662,7.05768l-6.47481,2.91349l6.79856,1.94233l2.20144,5.89228l1.94232,-5.69805l7.05768,-2.84861l-6.92791,-2.46056l-2.33108,-6.79856l0,0z';});
     setTimeout(borderPatrol4, turnTime);
 }
 
 var borderPatrol4 = function(){
     d3.select('svg').selectAll('#borderPatrol').data([[0+borderPatrolR, 0+borderPatrolR]]).transition().duration(turnTime)
-      .attr('cx', function(d){return d[0];})
-      .attr('cy', function(d){return d[1];});
+     .attr('x', function(d){return d[0]})
+    .attr('y', function(d){return d[1]})     
+      .attr('d', function(d){return 'm' + d[0] + ',' + (d[1] - radius) + '-2.2662,7.05768l-6.47481,2.91349l6.79856,1.94233l2.20144,5.89228l1.94232,-5.69805l7.05768,-2.84861l-6.92791,-2.46056l-2.33108,-6.79856l0,0z';});
     setTimeout(borderPatrol1, turnTime);
 }
 
@@ -137,11 +144,13 @@ var deathChecker = function(){
   var xPlayer = d3.select('#player').attr('cx').replace('px','');
   var yPlayer = d3.select('#player').attr('cy').replace('px','');
   
-  var enemies = d3.selectAll('.enemy');
+  var enemies = d3.selectAll('.enemy:not(#borderPatrol)');
   enemies.each(function(){
     xComps.push(d3.select(this).attr('cx'));
     yComps.push(d3.select(this).attr('cy'));
   });
+  xComps.push(d3.selectAll('#borderPatrol').attr('x'));
+  yComps.push(d3.selectAll('#borderPatrol').attr('y'));
   for (var i=0; i<xComps.length; i++) {
     if (Math.abs(xPlayer - xComps[i]) < (2*radius-4)) {
       if(Math.abs(yPlayer - yComps[i]) < (2*radius-4)) {

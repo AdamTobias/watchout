@@ -14,5 +14,15 @@ Feel free to use it if you like. */
 
 #borderPatrol{
   fill: orange;
+  -webkit-animation: spin .5s infinite linear;
+  transform-origin: center;
+}
 
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
 }
